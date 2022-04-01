@@ -16,6 +16,7 @@ usage()
     echo "                 5% for JPEGs, zero otherwise."
     echo "  -n <name>  The name to give the first file."
     echo "  -N <name>  The name to give the second file."
+    echo "  -o <name>  The name for the output file."
     echo
 }
 
@@ -26,7 +27,8 @@ exif_only=false
 fuzz=
 name1=
 name2=
-while getopts "hb:c:ef:n:N:" opt
+destfile=
+while getopts "hb:c:ef:n:N:o:" opt
 do
     case "$opt" in
     h)
@@ -51,9 +53,13 @@ do
     N)
         name2="$OPTARG"
         ;;
+    o)
+        destfile="$OPTARG"
+        ;;
     esac
 done
 shift $(( OPTIND - 1 ))
+
 
 # redirect output from script itself https://stackoverflow.com/a/314678/817736
 exec > /dev/null
@@ -168,8 +174,11 @@ then
     exit 0
 fi
 
-bn="$(basename "$f1")"
-destfile="$(mktemp -t "$bn.XXXXXX").png"
+if [[ -z "$destfile" ]]
+then
+    bn="$(basename "$f1")"
+    destfile="$(mktemp -t "$bn.XXXXXX").png"
+fi
 
 if [ -z "$fuzz" ] && ( [ "$ext" = "jpeg" ] || [ "$ext" = "jpg" ] )
 then
