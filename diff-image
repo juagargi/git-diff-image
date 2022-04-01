@@ -55,6 +55,9 @@ do
 done
 shift $(( OPTIND - 1 ))
 
+# redirect output from script itself https://stackoverflow.com/a/314678/817736
+exec > /dev/null
+exec 2>&1
 
 if [ -z "${1-}" ] || [ -z "${2-}" ]
 then
